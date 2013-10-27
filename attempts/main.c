@@ -14,7 +14,7 @@ int main(int argc, char const *argv[]) {
       case FILE_CONTENT_READ:
         polynomial = strtok(buffer, ",");
         while(polynomial != NULL) {
-          fprintf(stdout, "%s\n", trim(polynomial));
+          fprintf(stdout, "%s\n", polynomial);
           polynomial = strtok(NULL, ",");
         }
         break;

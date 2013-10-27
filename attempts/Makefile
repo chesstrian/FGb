@@ -1,12 +1,20 @@
 CC:=gcc
 
-all: main
+OBJS:=main.o utils.o
+PROG:=main
 
-main: main.o
-	$(CC) -o $@ main.o
+all: $(PROG)
+default: all
 
-main.o: main.c
+$(PROG): $(OBJS)
+	$(CC) $(OBJS) -o $@
+
+utils.o:
+	$(CC) -I ../utils -c ../utils/utils.c
+
+%.o: %.c
 	$(CC) -I ../utils -c $<
 
 clean:
-	-rm main main.o
+	rm -f $(OBJS)
+	rm -f $(PROG)
