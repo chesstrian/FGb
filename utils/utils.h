@@ -10,9 +10,9 @@
 #define CANNOT_OPEN_FILE -2
 #endif
 
-int getFileContent(char *filename, char **buffer);
+int get_file_content(char const *filename, char **buffer);
 
-int getFileContent(char *filename, char **buffer) {
+int get_file_content(char const *filename, char **buffer) {
   FILE *file = fopen(filename, "r");
   if (file) {
     long length;
