@@ -13,7 +13,14 @@ int read_data(char const *filename) {
     return read_file;
   }
 
-  fprintf(stdout, "%s", buffer);
+  parse_data(buffer);
 
   return FILE_CONTENT_READ;
+}
+
+int parse_data(char *buffer) {
+  // TODO : Implement.
+  fprintf(stdout, "%s", buffer);
+
+  return 0;
 }
