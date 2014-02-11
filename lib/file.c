@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "utils.h"
+#include "file.h"
 
 int get_file_content(char const *filename, char **buffer) {
   FILE *file = fopen(filename, "r");

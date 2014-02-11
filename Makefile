@@ -1,28 +1,20 @@
-GCC=gcc
-CFLAGS=-Wall -Werror -g -ansi -pedantic -std=c89
-CCFLAGS=-Wall -Werror -g
-LDFLAGS=-g -Wall -lstdc++
-
-OBJS:=main.o utils.o UtilsWrapper.o Utils.o
+OBJS:=main.o file.o helper.o
 PROG:=main
 
 all: $(PROG)
 default: all
 
 $(PROG): $(OBJS)
-	$(GCC) $(OBJS) $(LDFLAGS) -o $@
+	$(CC) $(OBJS) -o $@
 
 main.o: main.c
-	$(GCC) -I utils -I cpp -c $<
+	$(CC) -I lib -c $<
 
-utils.o:
-	$(GCC) -I utils -c utils/utils.c
+file.o:
+	$(CC) -I lib -c lib/file.c
 
-UtilsWrapper.o:
-	$(GCC) -I cpp $(CCFLAGS) -c cpp/UtilsWrapper.cc
-
-Utils.o:
-	$(GCC) -I cpp $(CCFLAGS) -c cpp/Utils.cc
+helper.o:
+	$(CC) -I lib -c lib/helper.c
 
 clean:
 	rm -f $(OBJS)

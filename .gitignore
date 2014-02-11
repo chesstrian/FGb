@@ -1,4 +1,5 @@
 # Eclipse files.
+.checkstyle
 .cproject
 .project
 .settings/*
@@ -6,3 +7,4 @@
 # Build files.
 *.o
 *.exe
+main
