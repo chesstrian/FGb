@@ -14,7 +14,6 @@ int main(int argc, char **argv) {
 
   switch (result) {
   case FILE_CONTENT_READ:
-    fprintf(stdout, "Could read file's content.\n");
     break;
   case FILE_CONTENT_UNREAD:
     fprintf(stderr, "Could not read file's content.\n");

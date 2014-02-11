@@ -3,6 +3,7 @@
 #include "file.h"
 
 #include "helper.h"
+#include "utilities.h"
 
 int read_data(char const *filename) {
   char *buffer;
@@ -20,6 +21,7 @@ int read_data(char const *filename) {
 
 int parse_data(char *buffer) {
   // TODO : Implement.
+  remove_brakets(buffer);
   fprintf(stdout, "%s", buffer);
 
   return 0;
