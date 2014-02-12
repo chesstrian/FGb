@@ -8,3 +8,6 @@
 *.o
 *.exe
 main
+
+# Log files.
+*.stackdump

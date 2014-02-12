@@ -5,7 +5,9 @@ endif
 SRC:=src
 LIB:=lib
 
-OBJS:=main.o file.o helper.o utilities.o
+CFLAGS:=-std=gnu99
+
+OBJS:=main.o file.o helper.o utilities.o str.o
 PROG:=main
 
 all: $(PROG)
@@ -18,7 +20,7 @@ main.o: $(SRC)/main.c
 	$(CC) -I $(LIB) -c $<
 
 %.o: $(LIB)/%.c
-	$(CC) -I $(LIB) -c $<
+	$(CC) -I $(LIB) $(CFLAGS) -c $<
 
 clean:
 	rm -f $(OBJS)

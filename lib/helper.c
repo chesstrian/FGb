@@ -1,7 +1,7 @@
 #include <stdio.h>
 
+#include "str.h"
 #include "file.h"
-
 #include "helper.h"
 #include "utilities.h"
 
@@ -21,8 +21,17 @@ int read_data(char const *filename) {
 
 int parse_data(char *buffer) {
   // TODO : Implement.
-  remove_brakets(buffer);
-  fprintf(stdout, "%s", buffer);
+  char **polys = NULL;
+  char const *separator = ",";
+
+  remove_brakets(&buffer);
+  polys = str_split(buffer, separator);
+
+  if (polys) {
+    for (int i = 0; *(polys + i); ++i) {
+      fprintf(stdout, "Super poly: %s.\n", *(polys + i));
+    }
+  }
 
   return 0;
 }
