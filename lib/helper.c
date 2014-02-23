@@ -6,35 +6,23 @@
 #include "helper.h"
 #include "utilities.h"
 
-int read_data(char const *filename) {
+void process_grobner(char const *filename, int display, int step, int block) {
   char *buffer;
 
-  // Read data from filename.
-  int read_file = get_file_content(filename, &buffer);
-  if (read_file != FILE_CONTENT_READ) {
-    return read_file;
-  }
+  if (get_file_content(filename, &buffer) == FILE_CONTENT_READ) {
+    char *poly = NULL;
+    char **polys = NULL;
+    char const *separator = ",";
 
-  parse_data(buffer);
+    remove_brakets(&buffer);
+    polys = str_split(buffer, separator);
 
-  return FILE_CONTENT_READ;
-}
-
-int parse_data(char *buffer) {
-  // TODO : Implement.
-  char *poly = NULL;
-  char **polys = NULL;
-  char const *separator = ",";
-
-  remove_brakets(&buffer);
-  polys = str_split(buffer, separator);
-
-  if (polys) {
-    for (int i = 0; *(polys + i); ++i) {
-      poly = str_trim(*(polys + i));
-      fprintf(stdout, "Super poly: %s.\n", poly);
+    if (polys) {
+      for (int i = 0; *(polys + i); ++i) {
+        poly = str_trim(*(polys + i));
+        fprintf(stdout, "Super poly: %s.\n", poly);
+      }
     }
   }
-
-  return 0;
 }
+

@@ -1,28 +1,39 @@
 #include <stdio.h>
+#include <time.h>
 
-#include "file.h"
 #include "helper.h"
 
+#include "call_fgb.h"
+
 int main(int argc, char **argv) {
-  if (argc != 2) {
-    fprintf(stderr, "Usage: %s file.\n", argv[0]);
+  if (argc < 3) {
+    fprintf(stderr, "Usage: %s <file> <display> <step> <block>.\n", argv[0]);
     return -1;
   }
 
   char const *filename = argv[1];
-  int result = read_data(filename);
 
-  switch (result) {
-  case FILE_CONTENT_READ:
-    break;
-  case FILE_CONTENT_UNREAD:
-    fprintf(stderr, "Could not read file's content.\n");
-    break;
-  case CANNOT_OPEN_FILE:
-    fprintf(stderr, "Could not open file.\n");
-    break;
-  default:
-    break;
+  int const kmax = 1;
+  int want_display = argc > 2 ? atoi(argv[2]) : 0;
+  int step0 = argc > 3 ? atoi(argv[3]) : -1;
+  int bk0 = argc > 4 ? atoi(argv[4]) : 0;
+
+  if (want_display) {
+    fprintf(stdout, "Version FGb/int %d FGb/modp:%d\n\n", FGb_int_internal_version(), FGb_internal_version());
+  }
+
+  int k;
+  clock_t time;
+
+  for (k = 0; k < kmax; ++k) {
+    int const dsp = k < kmax - 1 ? 0 : want_display;
+
+    fprintf(stdout, "****************************** Compute gbasis mod p ******************************\n");
+    /* compute modulo a small prime number  < 2^16, */
+    time = clock();
+    process_grobner(filename, dsp, step0, bk0);
+    time = clock() - time;
+    fprintf(stdout, "Takes %ju clicks (%f segundos).\n", time, ((float) time) / CLOCKS_PER_SEC);
   }
 
   return 0;
