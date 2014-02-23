@@ -2,7 +2,6 @@
 #include <time.h>
 
 #include "helper.h"
-
 #include "call_fgb.h"
 
 int main(int argc, char **argv) {

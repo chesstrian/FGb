@@ -4,14 +4,14 @@
 
 #include "str.h"
 
-char **str_split(char *split, char const *separator) {
-  size_t index = 0;
-  char **result = malloc(sizeof(char*) * strlen(split));
+char **str_split(char *split, char const *separator, int *length) {
+  *length = 0;
+  char **result = malloc(sizeof(char *) * strlen(split));
 
   char *poly = strtok(split, separator);
 
   while (poly) {
-    *(result + index++) = strdup(poly);
+    *(result + (*length)++) = strdup(poly);
     poly = strtok(0, separator);
   }
 

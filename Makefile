@@ -6,7 +6,9 @@ LIB:=lib
 ARCH:=x64
 DIR_FGB:=fgb
 
-CFLAGS:=-std=gnu99 -m64 -g
+CFLAGS:=-m64 -g
+
+LIB_FGB:=-I $(DIR_FGB) -I $(DIR_FGB)/nv/protocol -I $(DIR_FGB)/nv/int
 
 LINKS:=-lfgb -lfgbexp -lgb -lgbexp -lminpoly -lgmp -lminpolyvgf -lm -fopenmp
 
@@ -20,7 +22,10 @@ $(PROG): $(OBJS)
 	$(CPP) $(OBJS) -o $@ -I $(DIR_FGB) -L $(DIR_FGB)/$(ARCH) $(LINKS) 
 
 main.o: $(SRC)/main.c
-	$(CC) -I $(LIB) -I $(DIR_FGB) -I $(DIR_FGB)/nv/protocol -I $(DIR_FGB)/nv/int -c $<
+	$(CC) -I $(LIB) $(LIB_FGB) -c $<
+
+helper.o: $(LIB)/helper.c
+	$(CC) -I $(LIB) $(LIB_FGB) -c $<
 
 %.o: $(LIB)/%.c
 	$(CC) -I $(LIB) $(CFLAGS) -c $<
