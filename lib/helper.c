@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "str.h"
 #include "file.h"
@@ -28,6 +29,7 @@ void process_grobner(char const *filename, int display, int step, int block) {
   char **polynomials = str_split(buffer, comma, &n_polinomials);
 
   if (polynomials) {
+    clock_t time;
     int coefficient, n_monomials;
 
     Dpol_INT prev;
@@ -79,6 +81,7 @@ void process_grobner(char const *filename, int display, int step, int block) {
     }
 
     {
+      time = clock();
       int nb;
       const int n_input = n_polinomials;
       struct sFGB_Comp_Desc Env;
@@ -141,6 +144,9 @@ void process_grobner(char const *filename, int display, int step, int block) {
     }
     FGB(reset_memory)(); /* to reset Memory */
     FGB(exit)(); /* restore original GMP allocators */
+
+    time = clock() - time;
+    fprintf(stdout, "Takes %ju clicks (%f seconds).\n", time, ((float) time) / CLOCKS_PER_SEC);
   }
 }
 
