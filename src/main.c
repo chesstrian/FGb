@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
     time = clock();
     process_grobner(filename, dsp, step0, bk0);
     time = clock() - time;
-    fprintf(stdout, "Takes %ju clicks (%f segundos).\n", time, ((float) time) / CLOCKS_PER_SEC);
+    fprintf(stdout, "Takes %ju clicks (%f seconds).\n", time, ((float) time) / CLOCKS_PER_SEC);
   }
 
   return 0;
