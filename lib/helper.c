@@ -22,21 +22,21 @@ void process_grobner(char const *filename, int display, int step, int block) {
   char const *comma = ",";
   char const *plus = "+";
 
-  int length;
+  int n_polinomials;
   char const *buffer = str_trim(remove_brakets(get_file_content(filename)));
 
-  char **polynomials = str_split(buffer, comma, &length);
+  char **polynomials = str_split(buffer, comma, &n_polinomials);
 
   if (polynomials) {
-    int coefficient, n_polinomials;
+    int coefficient, n_monomials;
 
     Dpol_INT prev;
     double t0;
     global_nb = 0;
     const int nb_vars = 10;
+    // const int nb_vars = 5;
     char *vars[10] = { "w[1]", "w[2]", "w[3]", "w[4]", "w[5]", "w[6]", "w[7]", "w[8]", "w[9]", "w[10]" };
-
-    I32 e[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, exp[10];
+    // char *vars[5] = { "x1", "x2", "x3", "x4", "x5" };
 
     FGB(enter)();
     FGB(init_urgent)(2, MAPLE_FGB_BIGNNI, "DRLDRL", 100000, 0);
@@ -51,26 +51,32 @@ void process_grobner(char const *filename, int display, int step, int block) {
 
     char **monomials;
 
-    int i = 0, j = 0;
+    int i = 0, j, index;
 
     for (; *(polynomials + i); ++i) {
-      monomials = str_split(str_trim(*(polynomials + i)), plus, &n_polinomials);
+      monomials = str_split(str_trim(*(polynomials + i)), plus, &n_monomials);
 
-      prev = FGB(creat_poly)(n_polinomials); // Length is number of monomials in polinomial.
+      prev = FGB(creat_poly)(n_monomials); // Length is number of monomials in polinomial.
       input_basis[global_nb++] = prev;
 
-      for (; *(monomials + j); ++j) {
-        *exp = *e;
-        process_monomial(str_trim(*(monomials + j)), exp, vars, &coefficient);
+      index = 0;
+
+      for (j = 0; *(monomials + j); ++j) {
+        I32 e[10] = { 0 };
+        // I32 e[5] = { 0 };
+
+        process_monomial(str_trim(*(monomials + j)), e, vars, &coefficient);
 
         {
-          FGB(set_expos2)(prev, j, e, nb_vars);
+          FGB(set_expos2)(prev, index, e, nb_vars);
         }
-        FGB(set_coeff_I32)(prev, j, coefficient);
-      }
-    }
 
-    FGB(full_sort_poly2)(prev);
+        FGB(set_coeff_I32)(prev, index++, coefficient);
+      }
+
+      FGB(full_sort_poly2)(prev);
+
+    }
 
     {
       int nb;
@@ -82,7 +88,7 @@ void process_grobner(char const *filename, int display, int step, int block) {
       env->_force_elim = 0;
       env->_off = 0;
 
-      env->_index = 50000;
+      env->_index = 500000;
       env->_zone = 0;
       env->_memory = 0;
 
@@ -148,7 +154,6 @@ void process_monomial(char const *monomial, I32 e[], char *vars[], int *coeffici
   char *element;
 
   char **base_exp;
-  char *exponent;
   int exp;
 
   for (k = 0; *(elements + k); ++k) {
@@ -168,11 +173,11 @@ void process_monomial(char const *monomial, I32 e[], char *vars[], int *coeffici
     for (l = 0; strcmp(*(base_exp), *(vars + l)) != 0; ++l)
       ;
 
-    exponent = *(base_exp + 1);
-    if (exponent == NULL) {
+    if (length == 1) {
       exp = 1;
+    } else {
+      exp = atoi(*(base_exp + 1));
     }
-    exp = atoi(exponent);
 
     e[l] = exp;
   }
