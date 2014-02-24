@@ -4,12 +4,27 @@
 
 #include "str.h"
 
-char **str_split(char *split, char const *separator, int *length) {
+char *remove_brakets(char const *buffer) {
+  long unsigned memory = sizeof(char *) * strlen(buffer);
+  char *result = malloc(memory);
+  memcpy(result, buffer, memory);
+
+  result++; // Remove first bracket.
+  result[strlen(result) - 1] = '\0'; // Remove last bracket.
+
+  return result;
+}
+
+char **str_split(char const *buffer, char const *separator, int *length) {
+  char **result = malloc(sizeof(char *) * strlen(buffer));
+
+  long unsigned memory = sizeof(char *) * strlen(buffer);
+  char *string = malloc(memory);
+  memcpy(string, buffer, memory);
+
+  char *poly = strtok(string, separator);
+
   *length = 0;
-  char **result = malloc(sizeof(char *) * strlen(split));
-
-  char *poly = strtok(split, separator);
-
   while (poly) {
     *(result + (*length)++) = strdup(poly);
     poly = strtok(0, separator);
@@ -18,26 +33,28 @@ char **str_split(char *split, char const *separator, int *length) {
   return result;
 }
 
-char *str_trim(char *str) {
-  char *end;
+char *str_trim(char const *string) {
+  long unsigned memory = sizeof(char *) * strlen(string);
+  char *end, *result = malloc(memory);
+  memcpy(result, string, memory);
 
   // Trim leading space
-  while (isspace(*str)) {
-    str++;
+  while (isspace(*result)) {
+    result++;
   }
 
-  if (*str == 0) {
-    return str;
+  if (*result == 0) {
+    return result;
   }
 
   // Trim trailing space
-  end = str + strlen(str) - 1;
-  while (end > str && isspace(*end)) {
+  end = result + strlen(result) - 1;
+  while (end > result && isspace(*end)) {
     end--;
   }
 
   // Write new null terminator
   *(end + 1) = 0;
 
-  return str;
+  return result;
 }

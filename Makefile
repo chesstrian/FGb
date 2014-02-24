@@ -12,7 +12,7 @@ LIB_FGB:=-I $(DIR_FGB) -I $(DIR_FGB)/nv/protocol -I $(DIR_FGB)/nv/int
 
 LINKS:=-lfgb -lfgbexp -lgb -lgbexp -lminpoly -lgmp -lminpolyvgf -lm -fopenmp
 
-OBJS:=main.o file.o helper.o utilities.o str.o
+OBJS:=main.o file.o helper.o str.o
 PROG:=main
 
 all: $(PROG)

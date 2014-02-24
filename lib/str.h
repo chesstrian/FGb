@@ -1,7 +1,8 @@
 #ifndef STR_H_
 #define STR_H_
 
-char **str_split(char *split, char const *separator, int *length);
-char *str_trim(char *str);
+char *remove_brakets(char const *);
+char **str_split(char const *, char const *, int *);
+char *str_trim(char const *);
 
 #endif /* STR_H_ */
