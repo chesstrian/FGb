@@ -35,12 +35,12 @@ void process_grobner(char const *filename, int display, int step, int block) {
     Dpol_INT prev;
     double t0;
     global_nb = 0;
-    // const int nb_vars = 10;
+    const int nb_vars = 10;
     // const int nb_vars = 5;
-    const int nb_vars = 3;
-    // char *vars[10] = { "w[1]", "w[2]", "w[3]", "w[4]", "w[5]", "w[6]", "w[7]", "w[8]", "w[9]", "w[10]" };
+    // const int nb_vars = 3;
+    char *vars[10] = { "w[1]", "w[2]", "w[3]", "w[4]", "w[5]", "w[6]", "w[7]", "w[8]", "w[9]", "w[10]" };
     // char *vars[5] = { "x1", "x2", "x3", "x4", "x5" };
-    char *vars[3] = { "x", "y", "z" };
+    // char *vars[3] = { "x", "y", "z" };
 
     FGB(enter)();
     FGB(init_urgent)(2, MAPLE_FGB_BIGNNI, "DRLDRL", 100000, 0);
@@ -50,7 +50,7 @@ void process_grobner(char const *filename, int display, int step, int block) {
       FGB(reset_coeffs)(1, pr);
     }
     {
-      FGB(reset_expos)(3, 0, vars);
+      FGB(reset_expos)(10, 0, vars); // Verify.
     }
 
     char **monomials;
@@ -66,9 +66,9 @@ void process_grobner(char const *filename, int display, int step, int block) {
       index = 0;
 
       for (j = 0; *(monomials + j); ++j) {
-        // I32 e[10] = { 0 };
+        I32 e[10] = { 0 };
         // I32 e[5] = { 0 };
-        I32 e[3] = { 0 };
+        // I32 e[3] = { 0 };
 
         process_monomial(str_trim(*(monomials + j)), e, vars, &coefficient);
 
