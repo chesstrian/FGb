@@ -2,6 +2,6 @@
 #define HELPER_H_
 
 char **generate_vars(int);
-void process_grobner(char const *, int, int, int, int);
+void process_grobner(char const *, int, int, int, int, int);
 
 #endif /* HELPER_H_ */

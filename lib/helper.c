@@ -21,7 +21,7 @@ static Dpol output_basis[FGb_MAXI_BASE];
 void process_monomial(char const *, I32[], char *[], int *);
 void initialize_e(I32 *, int);
 
-void process_grobner(char const *filename, int n, int display, int step, int block) {
+void process_grobner(char const *filename, int n, int q, int display, int step, int block) {
   char const *comma = ",";
   char const *plus = "+";
 
@@ -47,7 +47,7 @@ void process_grobner(char const *filename, int n, int display, int step, int blo
     FGB(init_urgent)(2, MAPLE_FGB_BIGNNI, "DRLDRL", 100000, 0);
     FGB(init)(1, 1, 0, log_output);
     {
-      UI32 pr[] = { (UI32) (65521) };
+      UI32 pr[] = { (UI32) (q) };
       FGB(reset_coeffs)(1, pr);
     }
     {
