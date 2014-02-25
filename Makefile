@@ -35,4 +35,4 @@ clean:
 	rm -f $(PROG)
 
 test: main
-	./main ./resources/inputs/InputPolinomials.txt 1
+	./main ./resources/inputs/InputPolinomials.txt 10 1
