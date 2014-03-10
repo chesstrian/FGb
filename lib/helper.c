@@ -25,6 +25,9 @@ void process_grobner(char const *filename, int n, int q, int display, int step, 
   char const *comma = ",";
   char const *plus = "+";
 
+  char *fileoutname = output_filename();
+  FILE *fileout = fopen(fileoutname, "w");
+
   int n_polinomials;
   char const *buffer = str_trim(remove_brakets(get_file_content(filename)));
 
@@ -51,7 +54,7 @@ void process_grobner(char const *filename, int n, int q, int display, int step, 
       FGB(reset_coeffs)(1, pr);
     }
     {
-      FGB(reset_expos)(n, 0, vars); // Verify.
+      FGB(reset_expos)(n, 0, vars);
     }
 
     I32 *e = malloc(sizeof(I32 *) * n);
@@ -97,7 +100,8 @@ void process_grobner(char const *filename, int n, int q, int display, int step, 
 
       if (display) {
         int i;
-        fprintf(stderr, "[\n");
+        fprintf(stderr, "[\n    ");
+        fprintf(fileout, "[\n    ");
         for (i = 0; i < nb; i++) {
 #if 0
           /* Use this function to print the result */
@@ -116,28 +120,38 @@ void process_grobner(char const *filename, int n, int q, int display, int step, 
               I32 k, is_one = 1;
               UI32* ei = Mons + j * nb_vars;
 
-              if (j > 0)
+              if (j > 0) {
                 fprintf(stderr, "+");
+                fprintf(fileout, "+");
+              }
               fprintf(stderr, "%d", Cfs[j]);
+              fprintf(fileout, "%d", Cfs[j]);
 
               for (k = 0; k < nb_vars; k++)
                 if (ei[k]) {
-                  if (ei[k] == 1)
+                  if (ei[k] == 1) {
                     fprintf(stderr, "*%s", vars[k]);
-                  else
+                    fprintf(fileout, "*%s", vars[k]);
+                  } else {
                     fprintf(stderr, "*%s^%u", vars[k], ei[k]);
+                    fprintf(fileout, "*%s^%u", vars[k], ei[k]);
+                  }
                   is_one = 0;
                 }
-              if (is_one)
+              if (is_one) {
                 fprintf(stderr, "*1");
+                fprintf(fileout, "*1");
+              }
             }
           }
 
-          if (i < (nb - 1))
-            fprintf(stderr, ",");
-
+          if (i < (nb - 1)) {
+            fprintf(stderr, ",\n    ");
+            fprintf(fileout, ",\n    ");
+          }
         }
-        fprintf(stderr, "]\n");
+        fprintf(stderr, "\n]\n");
+        fprintf(fileout, "\n]\n");
       }
     }
     FGB(reset_memory)(); /* to reset Memory */
@@ -145,6 +159,8 @@ void process_grobner(char const *filename, int n, int q, int display, int step, 
 
     time = clock() - time;
     fprintf(stdout, "Takes %ju clicks (%f seconds).\n", time, ((float) time) / CLOCKS_PER_SEC);
+
+    fclose(fileout);
   }
 }
 

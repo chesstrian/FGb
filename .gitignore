@@ -11,3 +11,6 @@ main
 
 # Log files.
 *.stackdump
+
+# Output files.
+output.*
