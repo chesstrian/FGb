@@ -20,6 +20,7 @@ static Dpol output_basis[FGb_MAXI_BASE];
 
 void process_monomial(char const *, I32[], char *[], int *);
 void initialize_e(I32 *, int);
+int getMemoryUsage();
 
 void process_grobner(char const *filename, int n, int q, int display, int step, int block) {
   char const *comma = ",";
@@ -44,7 +45,7 @@ void process_grobner(char const *filename, int n, int q, int display, int step, 
     char **vars = generate_vars(n);
 
     char **monomials;
-    int i = 0, j, index;
+    int i = 0, j, index, virtualMemory;
 
     FGB(enter)();
     FGB(init_urgent)(2, MAPLE_FGB_BIGNNI, "DRLDRL", 100000, 0);
@@ -154,8 +155,11 @@ void process_grobner(char const *filename, int n, int q, int display, int step, 
         fprintf(fileout, "\n]\n");
       }
     }
+    virtualMemory = getMemoryUsage();
     FGB(reset_memory)(); /* to reset Memory */
     FGB(exit)(); /* restore original GMP allocators */
+
+    fprintf(stdout, "Virtual Memory Usage: %d KB.\n", virtualMemory - getMemoryUsage());
 
     time = clock() - time;
     fprintf(stdout, "Takes %ju clicks (%f seconds).\n", time, ((float) time) / CLOCKS_PER_SEC);
@@ -222,4 +226,28 @@ void initialize_e(I32 *e, int n) {
   for (i = 0; i < n; ++i) {
     e[i] = 0;
   }
+}
+
+int parseLine(char* line) {
+  int i = strlen(line);
+  while (*line < '0' || *line > '9')
+    line++;
+  line[i - 3] = '\0';
+  i = atoi(line);
+  return i;
+}
+
+int getMemoryUsage() { // Note: this value is in KB!
+  FILE *file = fopen("/proc/self/status", "r");
+  int result = -1;
+  char line[128];
+
+  while (fgets(line, 128, file) != NULL) {
+    if (strncmp(line, "VmSize:", 7) == 0) {
+      result = parseLine(line);
+      break;
+    }
+  }
+  fclose(file);
+  return result;
 }
