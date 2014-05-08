@@ -177,12 +177,12 @@ void process_grobner(char const *filename, int n, int q, int display, int step, 
 
 char **generate_vars(int n) {
   char index[5];
-  char **result = malloc(sizeof(char *) * 5 * n); // Five positions for w[i].
+  char **result = malloc(sizeof(char *) * 5 * n); // Five positions for x[i].
 
   int i;
 
   for (i = 0; i < n; ++i) {
-    sprintf(index, "w[%d]", i + 1);
+    sprintf(index, "x[%d]", i + 1);
     *(result + i) = strdup(index);
   }
 

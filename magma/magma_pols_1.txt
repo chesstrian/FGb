@@ -1,0 +1,44 @@
+// ChangeDirectory("C:/Users/Chesstrian/Documents"); GetCurrentDirectory(); load "magma_pols_1.txt";
+
+clear;
+
+for q in [2,3,5,7,11,13,17,19,23,29,31,37] do
+  for n in [2..13] do
+    SetOutputFile("out_q" cat IntegerToString(q) cat "_n" cat IntegerToString(n) cat ".txt":Overwrite:=false);
+
+    k<a> := GF(q);
+    R<[x]> := PolynomialRing(k,n,"grevlex");
+    XX := Matrix(R,1,n,[x[i] : i in [1..n]]);
+
+    A := [];
+    B := [];
+    P := [];
+
+    for i in [1..n] do
+      A[i] := Matrix(R,n,n,[Random(k) : i in [1..n^2]]);
+      B[i] := Matrix(R,1,n,[Random(k) : i in [1..n]]);
+      temp := XX*A[i]*Transpose(XX) + B[i]*Transpose(XX);
+      P[i] := temp[1][1];
+    end for;
+
+    PP := P;
+
+    t := Cputime();
+    GB := GroebnerBasis(PP);
+    CPUTime := Cputime(t);
+
+    q,n,CPUTime,GetMaximumMemoryUsage(),"#";
+
+    UnsetOutputFile() ;
+
+    SetOutputFile("pol_q" cat IntegerToString(q) cat "_n" cat IntegerToString(n) cat ".txt":Overwrite:=false);
+    PP;
+    UnsetOutputFile();
+
+    SetOutputFile("sol_q" cat IntegerToString(q) cat "_n" cat IntegerToString(n) cat ".txt":Overwrite:=false);
+    GB;
+    UnsetOutputFile();
+
+  end for;
+end for;
+
