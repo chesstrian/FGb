@@ -20,7 +20,8 @@ static Dpol output_basis[FGb_MAXI_BASE];
 
 void process_monomial(char const *, I32[], char *[], int *);
 void initialize_e(I32 *, int);
-int getMemoryUsage();
+int getVirtualMemoryUsage();
+int getPhisicalMemoryUsage();
 
 void process_grobner(char const *filename, int n, int q, int display, int step, int block) {
   char const *comma = ",";
@@ -45,7 +46,7 @@ void process_grobner(char const *filename, int n, int q, int display, int step, 
     char **vars = generate_vars(n);
 
     char **monomials;
-    int i = 0, j, index, virtualMemory;
+    int i = 0, j, index, virtualMemory, phisicalMemory;
 
     FGB(enter)();
     FGB(init_urgent)(2, MAPLE_FGB_BIGNNI, "DRLDRL", 100000, 0);
@@ -155,11 +156,17 @@ void process_grobner(char const *filename, int n, int q, int display, int step, 
         fprintf(fileout, "\n]\n");
       }
     }
-    virtualMemory = getMemoryUsage();
+    virtualMemory = getVirtualMemoryUsage();
+    phisicalMemory = getPhisicalMemoryUsage();
     FGB(reset_memory)(); /* to reset Memory */
     FGB(exit)(); /* restore original GMP allocators */
 
-    fprintf(stdout, "Virtual Memory Usage: %d KB.\n", virtualMemory - getMemoryUsage());
+    virtualMemory -= getVirtualMemoryUsage();
+    phisicalMemory -= getPhisicalMemoryUsage();
+
+    fprintf(stdout, "Virtual Memory Usage: %d KB.\n", virtualMemory);
+    fprintf(stdout, "Phisical Memory Usage: %d KB.\n", phisicalMemory);
+    fprintf(stdout, "Total Memory Usage: %d KB.\n", virtualMemory + phisicalMemory);
 
     time = clock() - time;
     fprintf(stdout, "Takes %ju clicks (%f seconds).\n", time, ((float) time) / CLOCKS_PER_SEC);
@@ -237,13 +244,28 @@ int parseLine(char* line) {
   return i;
 }
 
-int getMemoryUsage() { // Note: this value is in KB!
+int getVirtualMemoryUsage() { // Note: this value is in KB!
   FILE *file = fopen("/proc/self/status", "r");
   int result = -1;
   char line[128];
 
   while (fgets(line, 128, file) != NULL) {
     if (strncmp(line, "VmSize:", 7) == 0) {
+      result = parseLine(line);
+      break;
+    }
+  }
+  fclose(file);
+  return result;
+}
+
+int getPhisicalMemoryUsage() {
+  FILE* file = fopen("/proc/self/status", "r");
+  int result = -1;
+  char line[128];
+
+  while (fgets(line, 128, file) != NULL) {
+    if (strncmp(line, "VmRSS:", 6) == 0) {
       result = parseLine(line);
       break;
     }
