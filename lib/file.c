@@ -36,17 +36,18 @@ char *get_file_content(char const *filename) {
   }
 }
 
-char *output_filename() {
-  int i = 1;
-  char filenumber[3];
-  char *fileprefix = malloc(sizeof(char *) * 10);
+char *output_filename(int q, int n) {
   char *filename = malloc(sizeof(char *) * 20);
 
-  do {
-    sprintf(fileprefix, "%s", "output.");
-    sprintf(filenumber, "%d", i++);
-    filename = strcat(fileprefix, filenumber);
-  } while (access(filename, F_OK) != -1);
+  sprintf(filename, "%s_q%d_n%d", "solution", q, n);
+
+  return filename;
+}
+
+char *stats_filename(int q, int n) {
+  char *filename = malloc(sizeof(char *) * 20);
+
+  sprintf(filename, "%s_q%d_n%d", "output", q, n);
 
   return filename;
 }
