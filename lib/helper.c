@@ -18,7 +18,7 @@ static Dpol input_basis[FGb_MAXI_BASE];
 static I32 global_nb = -1;
 static Dpol output_basis[FGb_MAXI_BASE];
 
-void process_monomial(char const *, I32[], char *[], int *);
+void process_monomial(char *, I32[], char *[], int *);
 void initialize_e(I32 *, int);
 int getVirtualMemoryUsage();
 int getPhisicalMemoryUsage();
@@ -31,7 +31,9 @@ void process_grobner(char const *filename, int n, int q, int display, int step, 
   FILE *fileout = fopen(fileoutname, "w");
 
   int n_polinomials;
-  char const *buffer = str_trim(remove_brakets(get_file_content(filename)));
+  char *buffer = get_file_content(filename);
+  remove_brakets(&buffer);
+  str_trim(&buffer);
 
   char **polynomials = str_split(buffer, comma, &n_polinomials);
 
@@ -62,7 +64,10 @@ void process_grobner(char const *filename, int n, int q, int display, int step, 
     I32 *e = malloc(sizeof(I32 *) * n);
 
     for (; *(polynomials + i); ++i) {
-      monomials = str_split(str_trim(*(polynomials + i)), plus, &n_monomials);
+      char *polynomial = *(polynomials + i);
+      str_trim(&polynomial);
+
+      monomials = str_split(polynomial, plus, &n_monomials);
 
       prev = FGB(creat_poly)(n_monomials); // Length is number of monomials in polinomial.
       input_basis[global_nb++] = prev;
@@ -72,7 +77,10 @@ void process_grobner(char const *filename, int n, int q, int display, int step, 
       for (j = 0; *(monomials + j); ++j) {
         initialize_e(e, n);
 
-        process_monomial(str_trim(*(monomials + j)), e, vars, &coefficient);
+        char *monomial = *(monomials + j);
+        str_trim(&monomial);
+
+        process_monomial(monomial, e, vars, &coefficient);
 
         {
           FGB(set_expos2)(prev, index, e, nb_vars);
@@ -194,20 +202,23 @@ char **generate_vars(int n) {
   return result;
 }
 
-void process_monomial(char const *monomial, I32 e[], char *vars[], int *coefficient) {
+void process_monomial(char *monomial, I32 e[], char *vars[], int *coefficient) {
   int k, l, length;
 
   char const *times = "*";
   char const *caret = "^";
 
-  char **elements = str_split(str_trim(monomial), times, &length);
+  str_trim(&monomial);
+
+  char **elements = str_split(monomial, times, &length);
   char *element;
 
   char **base_exp;
   int exp;
 
   for (k = 0; *(elements + k); ++k) {
-    element = str_trim(*(elements + k));
+    element = *(elements + k);
+    str_trim(&element);
 
     if (k == 0) {
       *coefficient = atoi(element);

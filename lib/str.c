@@ -4,62 +4,43 @@
 
 #include "str.h"
 
-char *remove_brakets(char const *buffer) {
-  long unsigned memory = sizeof(char *) * strlen(buffer);
-  char *result = malloc(memory);
-  memcpy(result, buffer, memory);
+void remove_brakets(char **buffer) {
+  (*buffer)++; // Remove first bracket.
 
-  result++; // Remove first bracket.
+  int i = 0, len = strlen(*buffer);
 
-  int i = 1;
-  while (result[strlen(result) - i++] != ']') // Or could be 93
+  while ((*buffer)[len - ++i] != ']')
     ;
 
-  result[strlen(result) - i + 1] = '\0'; // Remove last bracket.
-
-  return result;
+  (*buffer)[len - i] = '\0'; // Remove last bracket.
 }
 
-char **str_split(char const *buffer, char const *separator, int *length) {
+void str_trim(char **string) {
+  while (isspace(**string)) {
+    (*string)++;
+  }
+
+  if (**string == 0) {
+    return;
+  }
+
+  char *end = *string + strlen(*string) - 1;
+  while (end > *string && isspace(*end)) {
+    end--;
+  }
+
+  *(end + 1) = 0;
+}
+
+char **str_split(char *buffer, char const *separator, int *length) {
   char **result = malloc(sizeof(char *) * strlen(buffer));
-
-  long unsigned memory = sizeof(char *) * strlen(buffer);
-  char *string = malloc(memory);
-  memcpy(string, buffer, memory);
-
-  char *poly = strtok(string, separator);
+  char *poly = strtok(buffer, separator);
 
   *length = 0;
   while (poly) {
     *(result + (*length)++) = strdup(poly);
     poly = strtok(0, separator);
   }
-
-  return result;
-}
-
-char *str_trim(char const *string) {
-  long unsigned memory = sizeof(char *) * strlen(string);
-  char *end, *result = malloc(memory);
-  memcpy(result, string, memory);
-
-  // Trim leading space
-  while (isspace(*result)) {
-    result++;
-  }
-
-  if (*result == 0) {
-    return result;
-  }
-
-  // Trim trailing space
-  end = result + strlen(result) - 1;
-  while (end > result && isspace(*end)) {
-    end--;
-  }
-
-  // Write new null terminator
-  *(end + 1) = 0;
 
   return result;
 }
