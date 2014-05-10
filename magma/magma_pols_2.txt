@@ -3,7 +3,7 @@
 clear;
 
 for q in [2,3,5] do
-  for n in [2..13] do
+  for n in [2..12] do
     SetOutputFile("out2_q" cat IntegerToString(q) cat "_n" cat IntegerToString(n) cat ".txt":Overwrite:=false);
 
     k<a> := GF(q);
