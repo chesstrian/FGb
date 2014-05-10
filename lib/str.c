@@ -10,7 +10,12 @@ char *remove_brakets(char const *buffer) {
   memcpy(result, buffer, memory);
 
   result++; // Remove first bracket.
-  result[strlen(result) - 1] = '\0'; // Remove last bracket.
+
+  int i = 1;
+  while (result[strlen(result) - i++] != ']') // Or could be 93
+    ;
+
+  result[strlen(result) - i + 1] = '\0'; // Remove last bracket.
 
   return result;
 }

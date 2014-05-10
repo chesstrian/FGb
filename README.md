@@ -22,7 +22,7 @@ For using this:
 Where:
 
 * `f` is filename with polinomials.
-* `n` is the number of variables, variables look like `w[i]`.
+* `n` is the number of variables, variables look like `x[i]`.
 * `q` is a prime number for Gröbner Field.
 
 Other values are for FGb library.
