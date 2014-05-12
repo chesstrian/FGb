@@ -1,5 +1,4 @@
-thesis
-======
+# FGb Library
 
 This work is based on Jean-Charles Faugère library for getting Gröbner Bases
 
@@ -26,4 +25,9 @@ Where:
 * `q` is a prime number for Gröbner Field.
 
 Other values are for FGb library.
+
+## Recommended Reading
+
+* [Daniel Cabarcas Thesis](https://etd.ohiolink.edu/ap/10?0::NO:10:P10_ACCESSION_NUM:ucin1277120935)
+* [FGb Paper](http://www-salsa.lip6.fr/~jcf/Papers/ICMS.pdf)
 
