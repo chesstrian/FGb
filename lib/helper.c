@@ -176,7 +176,7 @@ void process_grobner(char const *filename, int n, int q, int display, int step, 
     char *filestatsname = stats_filename(q, n);
     FILE *filestat = fopen(filestatsname, "w");
 
-    fprintf(filestat, "%d %d %f %d #\n", q, n, ((float) time) / CLOCKS_PER_SEC, virtualMemory + phisicalMemory);
+    fprintf(filestat, "%d %d %f %d #\n", q, n, t0, virtualMemory + phisicalMemory);
 
     fclose(filestat);
     fclose(fileout);
