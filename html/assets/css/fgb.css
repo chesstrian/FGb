@@ -1,0 +1,17 @@
+body {
+  padding-top: 65px;
+}
+
+th {
+  text-align: center;
+  width: 50%;
+}
+
+.panel-title {
+  text-align: center;
+}
+
+.stats {
+  width: 550px;
+  height: 200px;
+}

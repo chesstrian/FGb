@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 
 #include "str.h"
 #include "file.h"
@@ -38,7 +37,6 @@ void process_grobner(char const *filename, int n, int q, int display, int step, 
   char **polynomials = str_split(buffer, comma, &n_polinomials);
 
   if (polynomials) {
-    clock_t time;
     int coefficient, n_monomials;
 
     Dpol_INT prev;
@@ -92,7 +90,6 @@ void process_grobner(char const *filename, int n, int q, int display, int step, 
     }
 
     {
-      time = clock();
       int nb;
       const int n_input = n_polinomials;
       struct sFGB_Comp_Desc Env;
@@ -106,11 +103,17 @@ void process_grobner(char const *filename, int n, int q, int display, int step, 
       env->_zone = 0;
       env->_memory = 0;
 
+      virtualMemory = getVirtualMemoryUsage();
+      phisicalMemory = getPhisicalMemoryUsage();
+
       nb = FGB(groebner)(input_basis, n_input, output_basis, 1, 0, &t0, block, step, 0, env);
+
+      virtualMemory = getVirtualMemoryUsage() - virtualMemory;
+      phisicalMemory = getPhisicalMemoryUsage() - phisicalMemory;
 
       if (display) {
         int i;
-        fprintf(stderr, "[\n    ");
+        // fprintf(stderr, "[\n    ");
         fprintf(fileout, "[\n    ");
         for (i = 0; i < nb; i++) {
 #if 0
@@ -131,47 +134,42 @@ void process_grobner(char const *filename, int n, int q, int display, int step, 
               UI32* ei = Mons + j * nb_vars;
 
               if (j > 0) {
-                fprintf(stderr, "+");
+                // fprintf(stderr, "+");
                 fprintf(fileout, "+");
               }
-              fprintf(stderr, "%d", Cfs[j]);
+              // fprintf(stderr, "%d", Cfs[j]);
               fprintf(fileout, "%d", Cfs[j]);
 
               for (k = 0; k < nb_vars; k++)
                 if (ei[k]) {
                   if (ei[k] == 1) {
-                    fprintf(stderr, "*%s", vars[k]);
+                    // fprintf(stderr, "*%s", vars[k]);
                     fprintf(fileout, "*%s", vars[k]);
                   } else {
-                    fprintf(stderr, "*%s^%u", vars[k], ei[k]);
+                    // fprintf(stderr, "*%s^%u", vars[k], ei[k]);
                     fprintf(fileout, "*%s^%u", vars[k], ei[k]);
                   }
                   is_one = 0;
                 }
               if (is_one) {
-                fprintf(stderr, "*1");
+                // fprintf(stderr, "*1");
                 fprintf(fileout, "*1");
               }
             }
           }
 
           if (i < (nb - 1)) {
-            fprintf(stderr, ",\n    ");
+            // fprintf(stderr, ",\n    ");
             fprintf(fileout, ",\n    ");
           }
         }
-        fprintf(stderr, "\n]\n");
+        // fprintf(stderr, "\n]\n");
         fprintf(fileout, "\n]\n");
       }
     }
-    virtualMemory = getVirtualMemoryUsage();
-    phisicalMemory = getPhisicalMemoryUsage();
+
     FGB(reset_memory)(); /* to reset Memory */
     FGB(exit)(); /* restore original GMP allocators */
-
-    time = clock() - time;
-    virtualMemory -= getVirtualMemoryUsage();
-    phisicalMemory -= getPhisicalMemoryUsage();
 
     char *filestatsname = stats_filename(q, n);
     FILE *filestat = fopen(filestatsname, "w");
@@ -198,22 +196,19 @@ char **generate_vars(int n) {
 }
 
 void process_monomial(char *monomial, I32 e[], char *vars[], int *coefficient) {
-  int k, l, length;
+  int k, l, length1, length2;
 
   char const *times = "*";
   char const *caret = "^";
 
-  str_trim(&monomial);
-
-  char **elements = str_split(monomial, times, &length);
+  char **elements = str_split(monomial, times, &length1);
   char *element;
 
   char **base_exp;
   int exp;
 
-  for (k = 0; *(elements + k); ++k) {
+  for (k = 0; k < length1; k++) {
     element = *(elements + k);
-    str_trim(&element);
 
     if (k == 0) {
       *coefficient = atoi(element);
@@ -224,12 +219,12 @@ void process_monomial(char *monomial, I32 e[], char *vars[], int *coefficient) {
       }
     }
 
-    base_exp = str_split(element, caret, &length);
+    base_exp = str_split(element, caret, &length2);
 
     for (l = 0; strcmp(*(base_exp), *(vars + l)) != 0; ++l)
       ;
 
-    if (length == 1) {
+    if (length2 == 1) {
       exp = 1;
     } else {
       exp = atoi(*(base_exp + 1));
